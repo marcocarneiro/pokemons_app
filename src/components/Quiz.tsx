@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
+import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
+import debounce from 'lodash.debounce';
 
 interface Pokemon {
     name: string;
@@ -11,18 +13,28 @@ interface Pokemon {
             };
         };
     };
-    // Adicione outras propriedades que você espera receber do Pokémon
-    // Se precisar de mais detalhes, você pode consultar a API do PokeAPI
 }
 
 const Quiz: React.FC = () => {
     const [currentPokemon, setCurrentPokemon] = useState<Pokemon | null>(null);
     const [answer, setAnswer] = useState<string>('');
     const [feedback, setFeedback] = useState<string>('');
+    const [pokemonNames, setPokemonNames] = useState<string[]>([]);
 
     useEffect(() => {
         getPokemon();
     }, []);
+
+    useEffect(() => {
+        fetchAllPokemonNames();
+    }, []);
+
+    const fetchAllPokemonNames = async () => {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
+        const data = await response.json();
+        const names = data.results.map((pokemon: { name: string }) => pokemon.name);
+        setPokemonNames(names);
+    };
 
     const getPokemon = async () => {
         const randomId = Math.floor(Math.random() * 150) + 1;
@@ -48,23 +60,49 @@ const Quiz: React.FC = () => {
         setTimeout(getPokemon, 2000);
     };
 
+    const debouncedFetchPokemonNames = useMemo(() => 
+        debounce(async (input: string) => {
+            if (input) {
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=1000&name=${input}`);
+                const data = await response.json();
+                const names = data.results.map((pokemon: { name: string }) => pokemon.name);
+                setPokemonNames(names);
+            }
+        }, 500),
+    []);
+
+    const handleInputChange = (event: React.ChangeEvent<{}>, newInputValue: string) => {
+        setAnswer(newInputValue);
+        debouncedFetchPokemonNames(newInputValue);
+    };
+
     if (!currentPokemon) return null; // Ou algum indicador de carregamento, caso queira
 
     return (
         <Box sx={{ width: '100vw', height: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <Typography variant="h2">Pokémon Quiz</Typography>
-            <img className="pokemon-image" src={currentPokemon.sprites?.other['official-artwork'].front_default || currentPokemon.sprites.front_default} alt="Pokémon Image" style={{ width: '200px' }} />
+            <img className="pokemon-image" src={currentPokemon.sprites?.other['official-artwork'].front_default || currentPokemon.sprites.front_default} 
+            alt="Pokémon Image" style={{ width: '200px', margin: '20px 0' }} />
             <Typography variant="body1" id="question">Qual é o nome deste Pokémon?</Typography>
-            <TextField
-                type="text"
-                id="answer"
-                label="Digite sua resposta"
-                variant="standard"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
+            <Autocomplete
+                freeSolo
+                options={pokemonNames}
+                inputValue={answer}
+                onInputChange={handleInputChange}
+                sx={{ width: '300px' }}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        id="answer"
+                        label="Digite sua resposta"
+                        variant="standard"
+                    />
+                )}
             />
             <Box sx={{ marginTop: '40px', textAlign: 'center'}}>
-                <Button variant="contained" onClick={checkAnswer}>Enviar</Button>
+                <Button variant="outlined" startIcon={<CatchingPokemonIcon />} onClick={checkAnswer}>
+                    Tentar
+                </Button>
             </Box>                
             <Typography variant="body1" id="feedback">{feedback}</Typography>
         </Box>
