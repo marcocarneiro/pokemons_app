@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
-import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import debounce from 'lodash.debounce';
 
 interface Pokemon {
@@ -71,7 +70,7 @@ const Quiz: React.FC = () => {
         }, 500),
     []);
 
-    const handleInputChange = (event: React.ChangeEvent<{}>, newInputValue: string) => {
+    const handleInputChange = (event: React.SyntheticEvent<Element, Event>, newInputValue: string) => {
         setAnswer(newInputValue);
         debouncedFetchPokemonNames(newInputValue);
     };
@@ -100,9 +99,7 @@ const Quiz: React.FC = () => {
                 )}
             />
             <Box sx={{ marginTop: '40px', textAlign: 'center'}}>
-                <Button variant="outlined" startIcon={<CatchingPokemonIcon />} onClick={checkAnswer}>
-                    Tentar
-                </Button>
+                <Button variant="contained" onClick={checkAnswer}>Enviar</Button>
             </Box>                
             <Typography variant="body1" id="feedback">{feedback}</Typography>
         </Box>
@@ -110,3 +107,4 @@ const Quiz: React.FC = () => {
 };
 
 export default Quiz;
+
