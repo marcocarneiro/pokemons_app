@@ -36,7 +36,7 @@ const BackgroundBox = styled(Box)({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        opacity: 0.5, // Reduz a opacidade da imagem de fundo
+        opacity: 0.7, // Reduz a opacidade da imagem de fundo
         zIndex: -1,
     },
 });
