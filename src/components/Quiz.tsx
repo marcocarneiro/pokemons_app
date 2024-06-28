@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
+import { Box, IconButton, TextField, Typography, Autocomplete } from '@mui/material';
+import { CatchingPokemon } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
 interface Pokemon {
@@ -112,8 +113,14 @@ const Quiz: React.FC = () => {
                     />
                 )}
             />
-            <Box sx={{ marginTop: '40px', textAlign: 'center'}}>
-                <Button variant="contained" onClick={checkAnswer}>Enviar</Button>
+            <Box sx={{ marginTop: '40px', textAlign: 'center', display: 'flex', alignItems: 'center' }}>
+                <IconButton 
+                    color="primary" 
+                    onClick={checkAnswer} 
+                    sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <CatchingPokemon />
+                    <Typography variant="button">Enviar</Typography>
+                </IconButton>
             </Box>                
             <Typography variant="body1" id="feedback">{feedback}</Typography>
         </Box>
