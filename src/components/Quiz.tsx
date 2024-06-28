@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Box, IconButton, TextField, Typography, Autocomplete } from '@mui/material';
 import { CatchingPokemon } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
+import { styled } from '@mui/system';
+import backgroundImage from '../assets/background.jpg'; 
 
 interface Pokemon {
     name: string;
@@ -14,6 +16,30 @@ interface Pokemon {
         };
     };
 }
+
+const BackgroundBox = styled(Box)({
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        opacity: 0.5, // Reduz a opacidade da imagem de fundo
+        zIndex: -1,
+    },
+});
 
 const Quiz: React.FC = () => {
     const [currentPokemon, setCurrentPokemon] = useState<Pokemon | null>(null);
@@ -79,7 +105,7 @@ const Quiz: React.FC = () => {
     if (!currentPokemon) return null; // Ou algum indicador de carregamento, caso queira
 
     return (
-        <Box sx={{ width: '100vw', height: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <BackgroundBox>
             <Typography variant="h2" sx={{ position: 'relative', width: '360px'}}>
                 <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '250px' }} /> 
                 <Typography variant="h3" sx={{ position: 'absolute', top: '30px', right: '0'}}>Quiz</Typography>
@@ -123,7 +149,7 @@ const Quiz: React.FC = () => {
                 </IconButton>
             </Box>                
             <Typography variant="body1" id="feedback">{feedback}</Typography>
-        </Box>
+        </BackgroundBox>
     );
 };
 
