@@ -118,7 +118,7 @@ const Quiz: React.FC = () => {
                 options={pokemonNames}
                 inputValue={answer}
                 onInputChange={handleInputChange}
-                sx={{ width: '300px' }}
+                sx={{ width: '300px', textAlign: 'center' }}
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -135,10 +135,13 @@ const Quiz: React.FC = () => {
                                 top: '18px',
                                 transform: 'translateX(-50%)',
                             },
+                            '& .MuiInputBase-input': {
+                                textAlign: 'center', // Centraliza o texto do input
+                            },
                         }}
                     />
                 )}
-            />            
+            />
             <Box sx={{ marginTop: '40px', textAlign: 'center', display: 'flex', alignItems: 'center' }}>
                 <IconButton                      
                     onClick={checkAnswer} 
@@ -146,9 +149,10 @@ const Quiz: React.FC = () => {
                         display: 'flex', 
                         flexDirection: 'column', 
                         alignItems: 'center',
-                        '&:focus': { outline: 'none' },                        
-                        }} 
-                        >
+                        '&:focus': { outline: 'none' }, // Remove a borda ao clicar
+                    }}
+                    disableRipple // Desativa o ripple effect
+                >
                     <CatchingPokemon />
                     <Typography variant="button">Enviar</Typography>
                 </IconButton>
