@@ -102,7 +102,7 @@ const Quiz: React.FC = () => {
         debouncedFetchPokemonNames(newInputValue);
     };
 
-    if (!currentPokemon) return null; // Ou algum indicador de carregamento, caso queira
+    if (!currentPokemon) return null; // Ou algum indicador de carregamento
 
     return (
         <BackgroundBox>
@@ -138,12 +138,17 @@ const Quiz: React.FC = () => {
                         }}
                     />
                 )}
-            />
+            />            
             <Box sx={{ marginTop: '40px', textAlign: 'center', display: 'flex', alignItems: 'center' }}>
-                <IconButton 
-                    color="primary" 
+                <IconButton                      
                     onClick={checkAnswer} 
-                    sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        '&:focus': { outline: 'none' },                        
+                        }} 
+                        >
                     <CatchingPokemon />
                     <Typography variant="button">Enviar</Typography>
                 </IconButton>
