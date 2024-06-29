@@ -46,6 +46,8 @@ const Quiz: React.FC = () => {
     const [answer, setAnswer] = useState<string>('');
     const [feedback, setFeedback] = useState<string>('');
     const [pokemonNames, setPokemonNames] = useState<string[]>([]);
+    const [isFocused, setIsFocused] = useState<boolean>(false);
+    const [hasAnswered, setHasAnswered] = useState<boolean>(false);
 
     useEffect(() => {
         getPokemon();
@@ -69,6 +71,7 @@ const Quiz: React.FC = () => {
         setCurrentPokemon(data);
         setFeedback('');
         setAnswer('');
+        setHasAnswered(false);
     };
 
     const checkAnswer = () => {
@@ -84,6 +87,7 @@ const Quiz: React.FC = () => {
         }
 
         setTimeout(getPokemon, 2000);
+        setHasAnswered(true);
     };
 
     const debouncedFetchPokemonNames = useMemo(() => 
@@ -129,11 +133,14 @@ const Quiz: React.FC = () => {
                             style: { textAlign: 'center', width: '100%' },
                             shrink: true,
                         }}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
                         sx={{
                             '& .MuiInputLabel-root': {
                                 left: '50%',
                                 top: '18px',
                                 transform: 'translateX(-50%)',
+                                display: isFocused || hasAnswered ? 'none' : 'block',
                             },
                             '& .MuiInputBase-input': {
                                 textAlign: 'center', // Centraliza o texto do input
