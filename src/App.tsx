@@ -1,10 +1,11 @@
-import Quiz from "./components/Quiz";
+import PokemonGrid from "./components/PokemonGrid";
+//import Quiz from "./components/Quiz";
 
 
 const App = () => {
   return(
     <>
-      <Quiz />
+      <PokemonGrid />
     </>
   );
 }
