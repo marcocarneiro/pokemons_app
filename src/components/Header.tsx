@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#ff0000' }}>
+        <AppBar position="static" sx={{ backgroundColor: '#ed5564' }}>
             <Toolbar>
                 <Box sx={{ flexGrow: 1 }}>
                     <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
