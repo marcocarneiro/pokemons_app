@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Paper, Typography, Button } from '@mui/material';
+import { Box, Grid, Paper, Typography, Button, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 
 interface Pokemon {
@@ -68,7 +68,11 @@ const PokemonGrid: React.FC = () => {
     };
 
     if (loading) {
-        return <Typography variant="h6">Carregando...</Typography>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw', height: '100vh' }}>
+                <CircularProgress color="secondary" />
+            </Box>
+        );
     }
 
     return (
@@ -92,13 +96,13 @@ const PokemonGrid: React.FC = () => {
             </Grid>
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
                 <Button onClick={handlePrevPage} disabled={page === 1}>
-                    Página Anterior
+                    Anterior
                 </Button>
                 <Typography variant="body1" sx={{ margin: '0 16px' }}>
                     Página {page} de {Math.ceil(totalCount / limit)}
                 </Typography>
                 <Button onClick={handleNextPage} disabled={page === Math.ceil(totalCount / limit)}>
-                    Próxima Página
+                    Próximos
                 </Button>
             </Box>
         </Box>
