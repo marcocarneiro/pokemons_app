@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Grid, Paper, Typography, Button } from '@mui/material';
 import { styled } from '@mui/system';
 
 interface Pokemon {
@@ -27,12 +27,17 @@ const StyledPaper = styled(Paper)({
 const PokemonGrid: React.FC = () => {
     const [pokemons, setPokemons] = useState<Pokemon[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [page, setPage] = useState<number>(1);
+    const [totalCount, setTotalCount] = useState<number>(0);
+    const limit = 16;
 
     useEffect(() => {
         const fetchPokemons = async () => {
+            setLoading(true);
             try {
-                const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=50');
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${(page - 1) * limit}`);
                 const data = await response.json();
+                setTotalCount(data.count);
                 const pokemonDetails = await Promise.all(
                     data.results.map(async (pokemon: { url: string }) => {
                         const pokemonResponse = await fetch(pokemon.url);
@@ -48,7 +53,19 @@ const PokemonGrid: React.FC = () => {
         };
 
         fetchPokemons();
-    }, []);
+    }, [page]);
+
+    const handleNextPage = () => {
+        if (page < Math.ceil(totalCount / limit)) {
+            setPage(page + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    };
 
     if (loading) {
         return <Typography variant="h6">Carregando...</Typography>;
@@ -73,6 +90,17 @@ const PokemonGrid: React.FC = () => {
                     </Grid>
                 ))}
             </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+                <Button onClick={handlePrevPage} disabled={page === 1}>
+                    Página Anterior
+                </Button>
+                <Typography variant="body1" sx={{ margin: '0 16px' }}>
+                    Página {page} de {Math.ceil(totalCount / limit)}
+                </Typography>
+                <Button onClick={handleNextPage} disabled={page === Math.ceil(totalCount / limit)}>
+                    Próxima Página
+                </Button>
+            </Box>
         </Box>
     );
 };
