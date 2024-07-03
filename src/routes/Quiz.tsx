@@ -6,6 +6,7 @@ import { styled } from '@mui/system';
 import Lottie from 'react-lottie';
 import backgroundImage from '../assets/background.jpg';
 import animationData from '../assets/explode.json';
+import Header from '../components/Header';
 
 interface Pokemon {
     name: string;
@@ -132,7 +133,9 @@ const Quiz: React.FC = () => {
     };
 
     return (
-        <BackgroundBox>
+        <>            
+            <Header />
+            <BackgroundBox>
             <Typography variant="h2" sx={{ position: 'relative', width: '360px'}}>
                 <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '250px' }} /> 
                 <Typography variant="h3" sx={{ position: 'absolute', top: '30px', right: '0'}}>Quiz</Typography>
@@ -205,7 +208,9 @@ const Quiz: React.FC = () => {
                 </IconButton>
             </Box>                
             <Typography variant="body1" id="feedback">{feedback}</Typography>
-        </BackgroundBox>
+        </BackgroundBox>        
+        </>
+        
     );
 };
 export default Quiz;
