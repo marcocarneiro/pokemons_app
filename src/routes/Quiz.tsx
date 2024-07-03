@@ -28,6 +28,7 @@ const BackgroundBox = styled(Box)({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    overflowX: 'hidden',
     '&::before': {
         content: '""',
         position: 'absolute',
@@ -133,83 +134,83 @@ const Quiz: React.FC = () => {
     };
 
     return (
-        <>            
+        <Box>            
             <Header />
             <BackgroundBox>
-            <Typography variant="h2" sx={{ position: 'relative', width: '360px'}}>
-                <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '250px' }} /> 
-                <Typography variant="h3" sx={{ position: 'absolute', top: '30px', right: '0'}}>Quiz</Typography>
-            </Typography>
-            <PokemonContainer>
-                {showAnimation && (
-                    <Lottie
-                        options={defaultOptions}
-                        height={200}
-                        width={200}
-                        eventListeners={[
-                            {
-                                eventName: 'complete',
-                                callback: () => setShowAnimation(false),
-                            },
-                        ]}
-                    />
-                )}
-                {!showAnimation && (
-                    <img className="pokemon-image" src={currentPokemon.sprites?.other['official-artwork'].front_default || currentPokemon.sprites.front_default} 
-                    alt="Pokémon Image" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
-                )}
-            </PokemonContainer>
-            <Typography variant="body1" id="question" sx={{ marginBottom: '16px'}}>Qual é o nome deste Pokémon?</Typography>
-            <Autocomplete
-                freeSolo
-                options={pokemonNames}
-                inputValue={answer}
-                onInputChange={handleInputChange}
-                sx={{ width: '300px', textAlign: 'center' }}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        id="answer"
-                        label="Digite sua resposta"
-                        variant="standard"
-                        InputLabelProps={{
-                            style: { textAlign: 'center', width: '100%' },
-                            shrink: true,
+                <Typography variant="h2" sx={{ position: 'relative', width: '360px'}}>
+                    <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '250px' }} /> 
+                    <Typography variant="h3" sx={{ position: 'absolute', top: '30px', right: '0'}}>Quiz</Typography>
+                </Typography>
+                <PokemonContainer>
+                    {showAnimation && (
+                        <Lottie
+                            options={defaultOptions}
+                            height={200}
+                            width={200}
+                            eventListeners={[
+                                {
+                                    eventName: 'complete',
+                                    callback: () => setShowAnimation(false),
+                                },
+                            ]}
+                        />
+                    )}
+                    {!showAnimation && (
+                        <img className="pokemon-image" src={currentPokemon.sprites?.other['official-artwork'].front_default || currentPokemon.sprites.front_default} 
+                        alt="Pokémon Image" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                    )}
+                </PokemonContainer>
+                <Typography variant="body1" id="question" sx={{ marginBottom: '16px'}}>Qual é o nome deste Pokémon?</Typography>
+                <Autocomplete
+                    freeSolo
+                    options={pokemonNames}
+                    inputValue={answer}
+                    onInputChange={handleInputChange}
+                    sx={{ width: '300px', textAlign: 'center' }}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            id="answer"
+                            label="Digite sua resposta"
+                            variant="standard"
+                            InputLabelProps={{
+                                style: { textAlign: 'center', width: '100%' },
+                                shrink: true,
+                            }}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            sx={{
+                                '& .MuiInputLabel-root': {
+                                    left: '50%',
+                                    top: '18px',
+                                    transform: 'translateX(-50%)',
+                                    display: isFocused || hasAnswered ? 'none' : 'block',
+                                },
+                                '& .MuiInputBase-input': {
+                                    textAlign: 'center', // Centraliza o texto do input
+                                },
+                            }}
+                        />
+                    )}
+                />
+                <Box sx={{ marginTop: '40px', textAlign: 'center', display: 'flex', alignItems: 'center' }}>
+                    <IconButton                      
+                        onClick={checkAnswer} 
+                        sx={{ 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center',
+                            '&:focus': { outline: 'none' }, // Remove a borda ao clicar
                         }}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
-                        sx={{
-                            '& .MuiInputLabel-root': {
-                                left: '50%',
-                                top: '18px',
-                                transform: 'translateX(-50%)',
-                                display: isFocused || hasAnswered ? 'none' : 'block',
-                            },
-                            '& .MuiInputBase-input': {
-                                textAlign: 'center', // Centraliza o texto do input
-                            },
-                        }}
-                    />
-                )}
-            />
-            <Box sx={{ marginTop: '40px', textAlign: 'center', display: 'flex', alignItems: 'center' }}>
-                <IconButton                      
-                    onClick={checkAnswer} 
-                    sx={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        alignItems: 'center',
-                        '&:focus': { outline: 'none' }, // Remove a borda ao clicar
-                    }}
-                    disableRipple // Desativa o ripple effect
-                >
-                    <CatchingPokemon />
-                    <Typography variant="button">Enviar</Typography>
-                </IconButton>
-            </Box>                
-            <Typography variant="body1" id="feedback">{feedback}</Typography>
-        </BackgroundBox>        
-        </>
+                        disableRipple // Desativa o ripple effect
+                    >
+                        <CatchingPokemon />
+                        <Typography variant="button">Enviar</Typography>
+                    </IconButton>
+                </Box>                
+                <Typography variant="body1" id="feedback">{feedback}</Typography>
+            </BackgroundBox>        
+        </Box>
         
     );
 };
