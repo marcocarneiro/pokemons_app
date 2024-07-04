@@ -25,24 +25,13 @@ const BackgroundBox = styled(Box)({
     height: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',
-    overflowX: 'hidden',
-    '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        opacity: 0.7,
-        zIndex: -1,
-    },
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
 });
 
 const PokemonContainer = styled(Box)({
@@ -50,8 +39,8 @@ const PokemonContainer = styled(Box)({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '200px',
-    height: '200px',
+    width: '160px',
+    height: '160px',
     margin: '20px 0',
 });
 
@@ -134,9 +123,9 @@ const Quiz: React.FC = () => {
     };
 
     return (
-        <Box>            
-            <Header />
+        <>  
             <BackgroundBox>
+            <Header />
                 <Typography variant="h2" sx={{ position: 'relative', width: '360px'}}>
                     <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '250px' }} /> 
                     <Typography variant="h3" sx={{ position: 'absolute', top: '30px', right: '0'}}>Quiz</Typography>
@@ -193,7 +182,7 @@ const Quiz: React.FC = () => {
                         />
                     )}
                 />
-                <Box sx={{ marginTop: '40px', textAlign: 'center', display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ marginTop: '20px', textAlign: 'center', display: 'flex', alignItems: 'center' }}>
                     <IconButton                      
                         onClick={checkAnswer} 
                         sx={{ 
@@ -210,8 +199,7 @@ const Quiz: React.FC = () => {
                 </Box>                
                 <Typography variant="body1" id="feedback">{feedback}</Typography>
             </BackgroundBox>        
-        </Box>
-        
+        </>        
     );
 };
 export default Quiz;
