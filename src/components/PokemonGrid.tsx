@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Paper, Typography, Button, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 interface Pokemon {
     name: string;
@@ -30,6 +31,7 @@ const PokemonGrid: React.FC = () => {
     const [page, setPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
     const limit = 16;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPokemons = async () => {
@@ -67,6 +69,10 @@ const PokemonGrid: React.FC = () => {
         }
     };
 
+    const handlePokemonClick = (pokemonName: string) => {
+        navigate(`/pokemon/${pokemonName}`);
+    };
+
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw', height: '100vh' }}>
@@ -77,22 +83,22 @@ const PokemonGrid: React.FC = () => {
 
     return (
         <Box sx={{ padding: '16px' }}>
-            <Grid container spacing={2}>           
-            {pokemons.map((pokemon) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
-                <StyledPaper elevation={5}>
-                <img
-                    src={pokemon.sprites.other['official-artwork'].front_default}
-                    alt={pokemon.name}
-                    style={{ width: '160px', height: '160px' }}
-                />
-                <Typography variant="h6">{pokemon.name}</Typography>
-                <Typography variant="body2">
-                    {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
-                </Typography>
-            </StyledPaper>
-            </Grid>
-            ))}
+            <Grid container spacing={2}>
+                {pokemons.map((pokemon) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
+                        <StyledPaper elevation={5} onClick={() => handlePokemonClick(pokemon.name)}>
+                            <img
+                                src={pokemon.sprites.other['official-artwork'].front_default}
+                                alt={pokemon.name}
+                                style={{ width: '160px', height: '160px' }}
+                            />
+                            <Typography variant="h6">{pokemon.name}</Typography>
+                            <Typography variant="body2">
+                                {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
+                            </Typography>
+                        </StyledPaper>
+                    </Grid>
+                ))}
             </Grid>
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
                 <Button onClick={handlePrevPage} disabled={page === 1}>
