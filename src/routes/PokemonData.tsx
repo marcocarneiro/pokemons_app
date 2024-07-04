@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress, IconButton } from '@mui/material';
-import { useParams, useLocation } from 'react-router-dom';
+import { Box, Grid, Typography, CircularProgress, IconButton } from '@mui/material';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface Pokemon {
@@ -25,8 +25,7 @@ const PokemonData: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    /* const page = searchParams.get('page') || '1'; */
-    const page = searchParams.get('page');
+    const page = searchParams.get('page') || '1';
 
     useEffect(() => {
         const fetchPokemon = async () => {
@@ -57,26 +56,31 @@ const PokemonData: React.FC = () => {
         return <Typography variant="h6">Pokémon não encontrado</Typography>;
     }
 
+    console.log(`https://pokeapi.co/api/v2/pokemon/${name}`);
+
     return (
         <Box sx={{ padding: '16px' }}>
             <IconButton
                 sx={{ position: 'absolute', top: '16px', left: '16px' }}
-                onClick={() => window.location.href = `/?page=${page}`}
+                component={Link}
+                to={`/?page=${page}`}
             >
                 <ArrowBackIcon />
             </IconButton>
-            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '16px', marginTop: '48px' }}>
-                <img
-                    src={pokemon.sprites.other['official-artwork'].front_default}
-                    alt={pokemon.name}
-                    style={{ width: '160px', height: '160px', marginRight: '16px' }}
-                />
-                <Box>
-                    <Typography variant="h4">{pokemon.name}</Typography>
-                    <Typography variant="body1">Tipos: {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}</Typography>
-                    <Typography variant="body2">Outros dados do Pokémon...</Typography>
-                </Box>
-            </Box>
+                <Grid container >
+                    <Grid item xs={7} sm={12} md={7} >
+                        <img
+                            src={pokemon.sprites.other['official-artwork'].front_default}
+                            alt={pokemon.name}
+                            style={{ width: '100%', height: '100%', marginRight: '16px' }}
+                        />                
+                    </Grid>
+                    <Grid item xs={3} sm={12} md={3} >
+                        <Typography variant="h4">{pokemon.name}</Typography>
+                        <Typography variant="body1">Tipos: {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}</Typography>
+                        <Typography variant="body2">Outros dados do Pokémon...</Typography>
+                    </Grid>
+                </Grid>
         </Box>
     );
 };

@@ -7,7 +7,9 @@ const Header: React.FC = () => {
         <AppBar position="static" sx={{ backgroundColor: '#ed5564' }}>
             <Toolbar>
                 <Box sx={{ flexGrow: 1 }}>
-                    <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
+                    <Link to="/">
+                        <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
+                    </Link>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     <Button color="inherit" component={Link} to="/">
