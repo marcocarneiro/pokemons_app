@@ -77,22 +77,22 @@ const PokemonGrid: React.FC = () => {
 
     return (
         <Box sx={{ padding: '16px' }}>
-            <Grid container spacing={2}>
-                {pokemons.map((pokemon) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
-                        <StyledPaper elevation={5}>
-                            <img
-                                src={pokemon.sprites.other['official-artwork'].front_default}
-                                alt={pokemon.name}
-                                style={{ width: '160px', height: '160px' }}
-                            />
-                            <Typography variant="h6">{pokemon.name}</Typography>
-                            <Typography variant="body2">
-                                {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
-                            </Typography>
-                        </StyledPaper>
-                    </Grid>
-                ))}
+            <Grid container spacing={2}>           
+            {pokemons.map((pokemon) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
+                <StyledPaper elevation={5}>
+                <img
+                    src={pokemon.sprites.other['official-artwork'].front_default}
+                    alt={pokemon.name}
+                    style={{ width: '160px', height: '160px' }}
+                />
+                <Typography variant="h6">{pokemon.name}</Typography>
+                <Typography variant="body2">
+                    {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
+                </Typography>
+            </StyledPaper>
+            </Grid>
+            ))}
             </Grid>
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
                 <Button onClick={handlePrevPage} disabled={page === 1}>
