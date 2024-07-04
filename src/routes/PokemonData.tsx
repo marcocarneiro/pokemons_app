@@ -17,6 +17,9 @@ interface Pokemon {
             name: string;
         };
     }[];
+    height: number; // Adicionando altura
+    weight: number; // Adicionando peso
+    abilities: { ability: { name: string } }[]; // Adicionando habilidades
 }
 
 const PokemonData: React.FC = () => {
@@ -56,10 +59,8 @@ const PokemonData: React.FC = () => {
         return <Typography variant="h6">Pokémon não encontrado</Typography>;
     }
 
-    console.log(`https://pokeapi.co/api/v2/pokemon/${name}`);
-
     return (
-        <Box sx={{ padding: '16px' }}>
+        <Box sx={{ width: '80vw', margin: '0 auto', padding: '16px' }}>
             <IconButton
                 sx={{ position: 'absolute', top: '16px', left: '16px' }}
                 component={Link}
@@ -67,20 +68,23 @@ const PokemonData: React.FC = () => {
             >
                 <ArrowBackIcon />
             </IconButton>
-                <Grid container >
-                    <Grid item xs={7} sm={12} md={7} >
-                        <img
-                            src={pokemon.sprites.other['official-artwork'].front_default}
-                            alt={pokemon.name}
-                            style={{ width: '100%', height: '100%', marginRight: '16px' }}
-                        />                
-                    </Grid>
-                    <Grid item xs={3} sm={12} md={3} >
-                        <Typography variant="h4">{pokemon.name}</Typography>
-                        <Typography variant="body1">Tipos: {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}</Typography>
-                        <Typography variant="body2">Outros dados do Pokémon...</Typography>
-                    </Grid>
+            <Grid container spacing={4} alignItems="center" justifyContent="center">
+                <Grid item xs={12} md={6}>
+                    <img
+                        src={pokemon.sprites.other['official-artwork'].front_default}
+                        alt={pokemon.name}
+                        style={{ width: '100%', maxHeight: '500px', objectFit: 'contain' }}
+                    />
                 </Grid>
+                <Grid item xs={12} md={6}>
+                    <Typography variant="h4">{pokemon.name}</Typography>
+                    <Typography variant="body1">Tipos: {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}</Typography>
+                    <Typography variant="body2">Características:</Typography>
+                    <Typography variant="body2">Altura: {pokemon.height / 10} m</Typography> {/* Convertendo para metros */}
+                    <Typography variant="body2">Peso: {pokemon.weight / 10} kg</Typography> {/* Convertendo para quilogramas */}
+                    <Typography variant="body2">Habilidades: {pokemon.abilities.map((ability) => ability.ability.name).join(', ')}</Typography>
+                </Grid>
+            </Grid>
         </Box>
     );
 };
