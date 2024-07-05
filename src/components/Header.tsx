@@ -1,5 +1,5 @@
-import React from 'react';
-import { AppBar, Box, Toolbar, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { AppBar, Box, Toolbar, Button, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useLocation } from 'react-router-dom';
 import SearchBar from './SearchBar';
@@ -7,6 +7,11 @@ import SearchBar from './SearchBar';
 const Header: React.FC = () => {
     const location = useLocation();
     const isHomePage = location.pathname === '/';
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const handleMenuToggle = () => {
+        setMenuOpen(!menuOpen);
+    };
 
     const navigationButtons = (
         <>
@@ -19,24 +24,53 @@ const Header: React.FC = () => {
         </>
     );
 
+    const boxMenu = (
+        <Box
+            sx={{
+                position: 'absolute',
+                top: '60px',
+                right: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '16px',
+                width: '300px',
+                height: '50%',
+                background: '#fff',
+                zIndex: 1201, 
+            }}
+        >
+            {isHomePage && <SearchBar />}
+            {navigationButtons}
+        </Box>
+    );
+
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#ed5564' }}>
-            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '6px' }}>
-                <Link to="/">
-                    <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
-                </Link>
+        <>
+            <AppBar position="static" sx={{ backgroundColor: '#ed5564' }}>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '6px' }}>
+                    <Link to="/">
+                        <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
+                    </Link>
 
-                <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'flex-end', height: '100%' }}>
-                    {isHomePage && <SearchBar />}
-                    {navigationButtons}
-                </Box>
+                    <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'flex-end', height: '100%' }}>
+                        {isHomePage && <SearchBar />}
+                        {navigationButtons}
+                    </Box>
 
-                {/* menu hamburguer */}
-                <Box sx={{ display: { xs: 'block', md: 'none' }, }}>
-                    <MenuIcon />
-                </Box>
-            </Toolbar>
-        </AppBar>
+                    {/* Menu Hamburguer */}
+                    <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                        <IconButton
+                            color="inherit"
+                            edge="start"
+                            onClick={handleMenuToggle}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+            {menuOpen && boxMenu}
+        </>
     );
 };
 
