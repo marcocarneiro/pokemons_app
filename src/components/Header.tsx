@@ -7,6 +7,17 @@ const Header: React.FC = () => {
     const location = useLocation();
     const isHomePage = location.pathname === '/';
 
+    const navigationButtons = (
+        <>
+            <Button color="inherit" component={Link} to="/" sx={{ '&:hover': { color: '#900' } }} >
+                Tabela de Pokemons
+            </Button>
+            <Button color="inherit" component={Link} to="/quiz" sx={{ '&:hover': { color: '#900' } }} >
+                Quiz
+            </Button>
+        </>
+    );
+
     return (
         <AppBar position="static" sx={{ backgroundColor: '#ed5564' }}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '6px' }}>
@@ -15,18 +26,9 @@ const Header: React.FC = () => {
                 </Link>
 
                 <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
-                    {isHomePage && (
-                        <SearchBar />
-                    )}                
-                
-                    <Button color="inherit" component={Link} to="/" sx={{'&:hover': { color: '#900', },}} >
-                        Tabela de Pokemons
-                    </Button>
-                    <Button color="inherit" component={Link} to="/quiz" sx={{'&:hover': { color: '#900', },}} >
-                        Quiz
-                    </Button>
-                </Box>               
-                
+                    {isHomePage && <SearchBar />}
+                    {navigationButtons}
+                </Box>
             </Toolbar>
         </AppBar>
     );
