@@ -21,10 +21,10 @@ const Header: React.FC = () => {
                     </Box>
                 )}
                 <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Button color="inherit" component={Link} to="/">
+                    <Button color="inherit" component={Link} to="/" sx={{'&:hover': { color: '#900', },}} >
                         Tabela de Pokemons
                     </Button>
-                    <Button color="inherit" component={Link} to="/quiz">
+                    <Button color="inherit" component={Link} to="/quiz" sx={{'&:hover': { color: '#900', },}} >
                         Quiz
                     </Button>
                 </Box>
