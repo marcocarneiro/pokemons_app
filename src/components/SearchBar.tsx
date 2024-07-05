@@ -25,6 +25,9 @@ const StyledTextField = styled(TextField)({
   },
   '& .MuiInputLabel-root': {
     color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: '8px',
   },
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: 'white',
@@ -72,13 +75,13 @@ const SearchBar: React.FC = () => {
         renderInput={(params) => (
           <StyledTextField
             {...params}
-            label="Buscar Pokémon"
             variant="outlined"
             InputProps={{
               ...params.InputProps,
               startAdornment: (
                 <InputAdornment position="start">
                   <SearchIcon style={{ color: 'white' }} />
+                  <span style={{ marginLeft: '8px', color: 'white' }}>Buscar Pokémon</span>
                 </InputAdornment>
               ),
               endAdornment: (
