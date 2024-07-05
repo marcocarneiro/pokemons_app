@@ -1,19 +1,22 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { SearchProvider } from './contexts/SearchContext';
+import Header from './components/Header';
+import Home from './routes/PokemonGrid';
 import Quiz from './routes/Quiz';
-import PokemonData from './routes/PokemonData';
-import PokemonGrid from './routes/PokemonGrid';
 
 const App: React.FC = () => {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<PokemonGrid />} />
-                <Route path="/quiz" element={<Quiz />} />
-                <Route path="/pokemon/:name" element={<PokemonData />} />
-            </Routes>
-        </Router>
-    );
+  return (
+    <SearchProvider>
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/quiz" element={<Quiz />} />
+        </Routes>
+      </Router>
+    </SearchProvider>
+  );
 };
 
 export default App;

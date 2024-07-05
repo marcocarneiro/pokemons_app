@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Autocomplete, TextField, CircularProgress, Box, InputAdornment } from '@mui/material';
 import { styled } from '@mui/system';
 import SearchIcon from '@mui/icons-material/Search';
+import { useSearch } from '../contexts/SearchContext';  // Importa o contexto
 
 interface Pokemon {
   name: string;
@@ -37,7 +38,7 @@ const StyledTextField = styled(TextField)({
 const SearchBar: React.FC = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>('');
+  const { searchTerm, setSearchTerm } = useSearch();  // Usa o contexto
 
   useEffect(() => {
     const fetchPokemons = async () => {
@@ -65,9 +66,9 @@ const SearchBar: React.FC = () => {
         options={pokemons}
         getOptionLabel={(option) => option.name}
         loading={loading}
-        inputValue={inputValue}
+        inputValue={searchTerm}
         onInputChange={(event, newInputValue) => {
-          setInputValue(newInputValue);
+          setSearchTerm(newInputValue);  // Atualiza o valor de entrada
         }}
         filterOptions={(options, state) =>
           options.filter((option) => option.name.toLowerCase().includes(state.inputValue.toLowerCase()))

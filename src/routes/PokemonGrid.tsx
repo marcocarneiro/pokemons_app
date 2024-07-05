@@ -1,123 +1,77 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Grid, Paper, Typography, Button, CircularProgress } from '@mui/material';
-import { styled } from '@mui/system';
-import { useNavigate, useLocation } from 'react-router-dom';
-import Header from '../components/Header';
+import React, { useState, useEffect } from 'react';
+import { Box, Paper, Typography, Grid } from '@mui/material';
+import { useSearch } from '../contexts/SearchContext';  // Importa o contexto
 
 interface Pokemon {
-    name: string;
-    sprites: {
-        other: {
-            'official-artwork': {
-                front_default: string;
-            };
-        };
+  name: string;
+  url: string;
+  sprites: {
+    other: {
+      'official-artwork': {
+        front_default: string;
+      };
     };
-    types: {
-        type: {
-            name: string;
-        };
-    }[];
+  };
+  types: { type: { name: string } }[];
 }
 
-const StyledPaper = styled(Paper)({
-    padding: '16px',
-    textAlign: 'center',
-    elevation: 5,
-    cursor: 'pointer',
-});
-
 const PokemonGrid: React.FC = () => {
-    const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [totalCount, setTotalCount] = useState<number>(0);
-    const limit = 16;
-    const navigate = useNavigate();
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const page = Number(searchParams.get('page')) || 1;
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { searchTerm } = useSearch();  // Usa o contexto
 
-    useEffect(() => {
-        const fetchPokemons = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${(page - 1) * limit}`);
-                const data = await response.json();
-                setTotalCount(data.count);
-                const pokemonDetails = await Promise.all(
-                    data.results.map(async (pokemon: { url: string }) => {
-                        const pokemonResponse = await fetch(pokemon.url);
-                        return pokemonResponse.json();
-                    })
-                );
-                setPokemons(pokemonDetails);
-                setLoading(false);
-            } catch (error) {
-                console.error('Erro ao buscar pokémons:', error);
-                setLoading(false);
-            }
-        };
-
-        fetchPokemons();
-    }, [page]);
-
-    const handleNextPage = () => {
-        if (page < Math.ceil(totalCount / limit)) {
-            navigate(`/?page=${page + 1}`);
-        }
-    };
-
-    const handlePrevPage = () => {
-        if (page > 1) {
-            navigate(`/?page=${page - 1}`);
-        }
-    };
-
-    const handlePokemonClick = (pokemonName: string) => {
-        navigate(`/pokemon/${pokemonName}?page=${page}`);
-    };
-
-    if (loading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw', height: '100vh' }}>
-                <CircularProgress color="secondary" />
-            </Box>
+  useEffect(() => {
+    const fetchPokemons = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=50');
+        const data = await response.json();
+        const pokemonData = await Promise.all(
+          data.results.map(async (pokemon: { name: string; url: string }) => {
+            const res = await fetch(pokemon.url);
+            return res.json();
+          })
         );
-    }
+        setPokemons(pokemonData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Erro ao buscar Pokémons:', error);
+        setLoading(false);
+      }
+    };
 
-    return (
-        <Box>
-            <Header />
-            <Grid container spacing={2} sx={{ padding: '16px' }}>
-                {pokemons.map((pokemon) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
-                        <StyledPaper elevation={5} onClick={() => handlePokemonClick(pokemon.name)}>
-                            <img
-                                src={pokemon.sprites.other['official-artwork'].front_default}
-                                alt={pokemon.name}
-                                style={{ width: '160px', height: '160px' }}
-                            />
-                            <Typography variant="h6">{pokemon.name}</Typography>
-                            <Typography variant="body2">
-                                {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
-                            </Typography>
-                        </StyledPaper>
-                    </Grid>
-                ))}
-            </Grid>
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-                <Button onClick={handlePrevPage} disabled={page === 1}>
-                    Anterior
-                </Button>
-                <Typography variant="body1" sx={{ margin: '0 16px' }}>
-                    Página {page} de {Math.ceil(totalCount / limit)}
+    fetchPokemons();
+  }, []);
+
+  const filteredPokemons = pokemons.filter((pokemon) =>
+    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <Box sx={{ flexGrow: 1, padding: 3 }}>
+      <Grid container spacing={3}>
+        {loading ? (
+          <Typography variant="h6">Carregando...</Typography>
+        ) : (
+          filteredPokemons.map((pokemon) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
+              <Paper elevation={5} sx={{ padding: 2, textAlign: 'center' }}>
+                <img
+                  src={pokemon.sprites.other['official-artwork'].front_default}
+                  alt={pokemon.name}
+                  style={{ width: '100%', height: 'auto' }}
+                />
+                <Typography variant="h6">{pokemon.name}</Typography>
+                <Typography variant="body2">
+                  {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
                 </Typography>
-                <Button onClick={handleNextPage} disabled={page === Math.ceil(totalCount / limit)}>
-                    Próximos
-                </Button>
-            </Box>
-        </Box>
-    );
+              </Paper>
+            </Grid>
+          ))
+        )}
+      </Grid>
+    </Box>
+  );
 };
 
 export default PokemonGrid;
