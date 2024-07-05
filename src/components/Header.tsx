@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppBar, Box, Toolbar, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import SearchBar from './SearchBar';
 
 const Header: React.FC = () => {
     return (
@@ -12,6 +13,7 @@ const Header: React.FC = () => {
                     </Link>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2 }}>
+                    <SearchBar />
                     <Button color="inherit" component={Link} to="/">
                         Tabela de Pokemons
                     </Button>
