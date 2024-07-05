@@ -9,25 +9,24 @@ const Header: React.FC = () => {
 
     return (
         <AppBar position="static" sx={{ backgroundColor: '#ed5564' }}>
-            <Toolbar>
-                <Box sx={{ flexGrow: 1 }}>
-                    <Link to="/">
-                        <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
-                    </Link>
-                </Box>
-                {isHomePage && (
-                    <Box sx={{ flexGrow: 1 }}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '6px' }}>
+                <Link to="/">
+                    <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
+                </Link>
+
+                <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
+                    {isHomePage && (
                         <SearchBar />
-                    </Box>
-                )}
-                <Box sx={{ display: 'flex', gap: 2 }}>
+                    )}                
+                
                     <Button color="inherit" component={Link} to="/" sx={{'&:hover': { color: '#900', },}} >
                         Tabela de Pokemons
                     </Button>
                     <Button color="inherit" component={Link} to="/quiz" sx={{'&:hover': { color: '#900', },}} >
                         Quiz
                     </Button>
-                </Box>
+                </Box>               
+                
             </Toolbar>
         </AppBar>
     );
