@@ -23,7 +23,7 @@ const PokemonGrid: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { searchTerm } = useSearch();  // Usa o contexto
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const pokemonsPerPage = 20;
+  const pokemonsPerPage = 12;
 
   useEffect(() => {
     const fetchPokemons = async () => {
@@ -82,7 +82,7 @@ const PokemonGrid: React.FC = () => {
           {currentPokemons.map((pokemon) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
               <Paper elevation={5} sx={{ padding: 2, textAlign: 'center' }}>
-                <Link to={`/pokemon/${pokemon.name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/pokemon/${pokemon.name}?page=${currentPage}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img
                     src={pokemon.sprites.other['official-artwork'].front_default}
                     alt={pokemon.name}
