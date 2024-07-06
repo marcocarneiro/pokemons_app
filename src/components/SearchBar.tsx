@@ -61,7 +61,7 @@ const SearchBar: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ display: 'inline-block', minWidth: '360px', margin: '0 40px' }}>
+    <Box sx={{ display: 'inline-block', minWidth: '360px', margin: '0' }}>
       <Autocomplete
         options={pokemons}
         getOptionLabel={(option) => option.name}

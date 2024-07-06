@@ -16,8 +16,8 @@ const Header: React.FC = () => {
 
     const navigationButtons = (
         <>
-            <Button color="inherit" component={Link} to="/" sx={{ '&:hover': { color: '#900' } }} >
-                Tabela de Pokemons
+            <Button color="inherit" component={Link} to="/" sx={{ '&:hover': { color: '#900' }, margin: '0 20px' }} >
+                Pokemons
             </Button>
             <Button color="inherit" component={Link} to="/quiz" sx={{ '&:hover': { color: '#900' } }} >
                 Quiz
@@ -34,7 +34,7 @@ const Header: React.FC = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 padding: '16px',
-                width: '300px',
+                width: '380px',
                 height: '50%',
                 background: '#fff',
                 boxShadow: '0 4px 4px #999',
