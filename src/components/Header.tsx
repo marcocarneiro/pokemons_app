@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppBar, Box, Toolbar, Button } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useLocation } from 'react-router-dom';
 import SearchBar from './SearchBar';
 
@@ -11,7 +10,7 @@ const Header: React.FC = () => {
     const navigationButtons = (
         <>
             <Button color="inherit" component={Link} to="/" sx={{ '&:hover': { color: '#900' } }} >
-                Pokemons
+                Tabela de Pokemons
             </Button>
             <Button color="inherit" component={Link} to="/quiz" sx={{ '&:hover': { color: '#900' } }} >
                 Quiz
@@ -26,14 +25,9 @@ const Header: React.FC = () => {
                     <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
                 </Link>
 
-                <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'flex-end', height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-end', height: '100%' }}>
                     {isHomePage && <SearchBar />}
                     {navigationButtons}
-                </Box>
-
-                {/* menu hamburguer */}
-                <Box sx={{ display: { xs: 'block', md: 'none' }, }}>
-                    <MenuIcon />
                 </Box>
             </Toolbar>
         </AppBar>
