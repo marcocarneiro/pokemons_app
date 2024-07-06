@@ -49,10 +49,10 @@ const Header: React.FC = () => {
     return (
         <>
             <AppBar position="static" sx={{ backgroundColor: '#ed5564' }}>
-                    <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '6px' }}>
-                        <Link to="/">
-                            <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
-                        </Link>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', padding: '6px' }}>
+                    <Link to="/">
+                        <img src="/logo-alltype.svg" alt="Pokémon Logo" style={{ width: '120px' }} />
+                    </Link>
 
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'flex-end', height: '100%' }}>
                         {isHomePage && <SearchBar />}

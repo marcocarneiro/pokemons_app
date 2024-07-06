@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Grid } from '@mui/material';
+import { Box, Paper, Typography, Grid, Button, CircularProgress } from '@mui/material';
 import { useSearch } from '../contexts/SearchContext';  // Importa o contexto
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 
 interface Pokemon {
@@ -19,25 +19,34 @@ interface Pokemon {
 
 const PokemonGrid: React.FC = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { searchTerm } = useSearch();  // Usa o contexto
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const pokemonsPerPage = 20;
 
   useEffect(() => {
     const fetchPokemons = async () => {
       setLoading(true);
       try {
-        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=50');
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=500');
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const data = await response.json();
         const pokemonData = await Promise.all(
           data.results.map(async (pokemon: { name: string; url: string }) => {
             const res = await fetch(pokemon.url);
+            if (!res.ok) {
+              throw new Error(`HTTP error! Status: ${res.status}`);
+            }
             return res.json();
           })
         );
         setPokemons(pokemonData);
-        setLoading(false);
       } catch (error) {
         console.error('Erro ao buscar Pokémons:', error);
+      } finally {
         setLoading(false);
       }
     };
@@ -45,37 +54,71 @@ const PokemonGrid: React.FC = () => {
     fetchPokemons();
   }, []);
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100vw', height: '100vh' }}>
+        <CircularProgress color="secondary" />
+      </Box>
+    );
+  }
+
   const filteredPokemons = pokemons.filter((pokemon) =>
     pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const indexOfLastPokemon = currentPage * pokemonsPerPage;
+  const indexOfFirstPokemon = indexOfLastPokemon - pokemonsPerPage;
+  const currentPokemons = filteredPokemons.slice(indexOfFirstPokemon, indexOfLastPokemon);
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: page.toString() });
+  };
+
   return (
     <>
       <Header />
-      <Box sx={{ flexGrow: 1, padding: 3 }}>
-        <Grid container spacing={3}>
-          {loading ? (
-            <Typography variant="h6">Carregando...</Typography>
-          ) : (
-            filteredPokemons.map((pokemon) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
-                <Link to={`/pokemon/${pokemon.name}`}>
-                <Paper elevation={5} sx={{ padding: 2, textAlign: 'center' }}>
+      <Box sx={{ padding: 2 }}>
+        <Grid container spacing={2}>
+          {currentPokemons.map((pokemon) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
+              <Paper elevation={5} sx={{ padding: 2, textAlign: 'center' }}>
+                <Link to={`/pokemon/${pokemon.name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img
                     src={pokemon.sprites.other['official-artwork'].front_default}
                     alt={pokemon.name}
                     style={{ width: '100%', height: 'auto' }}
                   />
-                  <Typography variant="h6">{pokemon.name}</Typography>
-                  <Typography variant="body2">
-                    {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
+                  <Typography variant="h6" component="div">
+                    {pokemon.name}
                   </Typography>
-                </Paper>
+                  <Typography variant="body2" color="text.secondary">
+                    {pokemon.types.map((type) => type.type.name).join(', ')}
+                  </Typography>
                 </Link>
-              </Grid>
-            ))
-          )}
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
+        <Box sx={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+            sx={{ margin: '0 10px' }}
+          >
+            Anterior
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={indexOfLastPokemon >= filteredPokemons.length}
+            onClick={() => handlePageChange(currentPage + 1)}
+            sx={{ margin: '0 10px' }}
+          >
+            Próximo
+          </Button>
+        </Box>
       </Box>
     </>
   );
