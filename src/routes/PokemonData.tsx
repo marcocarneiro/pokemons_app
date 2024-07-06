@@ -80,8 +80,8 @@ const PokemonData: React.FC = () => {
                     <Typography variant="h4">{pokemon.name}</Typography>
                     <Typography variant="body1">Tipos: {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}</Typography>
                     <Typography variant="body2">Características:</Typography>
-                    <Typography variant="body2">Altura: {pokemon.height / 10} m</Typography> {/* Convertendo para metros */}
-                    <Typography variant="body2">Peso: {pokemon.weight / 10} kg</Typography> {/* Convertendo para quilogramas */}
+                    <Typography variant="body2">Altura: {pokemon.height / 10} m</Typography> 
+                    <Typography variant="body2">Peso: {pokemon.weight / 10} kg</Typography> 
                     <Typography variant="body2">Habilidades: {pokemon.abilities.map((ability) => ability.ability.name).join(', ')}</Typography>
                 </Grid>
             </Grid>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Paper, Typography, Grid } from '@mui/material';
 import { useSearch } from '../contexts/SearchContext';  // Importa o contexto
+import { Link } from 'react-router-dom';
+import Header from '../components/Header';
 
 interface Pokemon {
   name: string;
@@ -48,29 +50,34 @@ const PokemonGrid: React.FC = () => {
   );
 
   return (
-    <Box sx={{ flexGrow: 1, padding: 3 }}>
-      <Grid container spacing={3}>
-        {loading ? (
-          <Typography variant="h6">Carregando...</Typography>
-        ) : (
-          filteredPokemons.map((pokemon) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
-              <Paper elevation={5} sx={{ padding: 2, textAlign: 'center' }}>
-                <img
-                  src={pokemon.sprites.other['official-artwork'].front_default}
-                  alt={pokemon.name}
-                  style={{ width: '100%', height: 'auto' }}
-                />
-                <Typography variant="h6">{pokemon.name}</Typography>
-                <Typography variant="body2">
-                  {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))
-        )}
-      </Grid>
-    </Box>
+    <>
+      <Header />
+      <Box sx={{ flexGrow: 1, padding: 3 }}>
+        <Grid container spacing={3}>
+          {loading ? (
+            <Typography variant="h6">Carregando...</Typography>
+          ) : (
+            filteredPokemons.map((pokemon) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={pokemon.name}>
+                <Link to={`/pokemon/${pokemon.name}`}>
+                <Paper elevation={5} sx={{ padding: 2, textAlign: 'center' }}>
+                  <img
+                    src={pokemon.sprites.other['official-artwork'].front_default}
+                    alt={pokemon.name}
+                    style={{ width: '100%', height: 'auto' }}
+                  />
+                  <Typography variant="h6">{pokemon.name}</Typography>
+                  <Typography variant="body2">
+                    {pokemon.types.map((typeInfo) => typeInfo.type.name).join(', ')}
+                  </Typography>
+                </Paper>
+                </Link>
+              </Grid>
+            ))
+          )}
+        </Grid>
+      </Box>
+    </>
   );
 };
 
