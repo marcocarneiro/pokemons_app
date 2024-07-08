@@ -22,7 +22,7 @@ interface Pokemon {
 const Pokanban = () => {
     const [pokemons, setPokemons] = useState<Pokemon[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
+    const [selectedPokemons, setSelectedPokemons] = useState<Pokemon[]>([]);
 
     const open = Boolean(anchorEl);
 
@@ -50,7 +50,10 @@ const Pokanban = () => {
     };
 
     const handleSelectPokemon = (pokemon: Pokemon) => {
-        setSelectedPokemon(pokemon);
+        // Check if the Pokemon is already selected
+        if (!selectedPokemons.some(selected => selected.name === pokemon.name)) {
+            setSelectedPokemons(prevSelectedPokemons => [...prevSelectedPokemons, pokemon]);
+        }
         handleClose();
     };
 
@@ -68,17 +71,17 @@ const Pokanban = () => {
                     <IconButton color="inherit" size="large" onClick={handleClick}>
                         <CatchingPokemon />
                     </IconButton>
-                    {selectedPokemon && (
-                        <Paper elevation = {5} sx={{ padding: '16px', marginTop: '16px' }}>
+                    {selectedPokemons.map((pokemon, index) => (
+                        <Paper key={index} sx={{ padding: '16px', marginTop: '16px' }}>
                             <img
-                                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${selectedPokemon.url.split('/')[6]}.png`}
-                                alt={selectedPokemon.name}
-                                width={250}
-                                height={250}
+                                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.url.split('/')[6]}.png`}
+                                alt={pokemon.name}
+                                width={200}
+                                height={200}
                             />
-                            <Typography variant="h6">{selectedPokemon.name}</Typography>
+                            <Typography variant="h6">{pokemon.name}</Typography>
                         </Paper>
-                    )}
+                    ))}
                     <Menu
                         anchorEl={anchorEl}
                         open={open}
@@ -88,6 +91,7 @@ const Pokanban = () => {
                             <MenuItem
                                 key={pokemon.name}
                                 onClick={() => handleSelectPokemon(pokemon)}
+                                disabled={selectedPokemons.some(selected => selected.name === pokemon.name)}
                             >
                                 {pokemon.name}
                             </MenuItem>
@@ -109,57 +113,3 @@ const Pokanban = () => {
 }
 
 export default Pokanban;
-
-
-
-
-
-
-
-
-/* import { Box, IconButton, Typography } from "@mui/material";
-import { CatchingPokemon } from '@mui/icons-material';
-import Header from "../components/Header";
-
-const cssColumns = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignContent: 'flex-start',
-    padding: '10px',
-}
-
-const cssColumn = {
-    padding: '16px'
-}
-
-const Pokanban = () => {
-    return(
-        <>
-            <Header/>
-            <Box sx={{ padding: '10px' }}>
-                <Typography variant="h6" gutterBottom>
-                    POKANBAN - Gestão de Pokemons
-                </Typography>               
-            </Box>
-            <Box sx={cssColumns}>
-                <Box sx={{cssColumn}}>
-                    <Typography variant="subtitle1" gutterBottom>INTERESSE</Typography>
-                    <IconButton color="inherit" size="large">
-                            <CatchingPokemon />
-                    </IconButton>
-                </Box>
-                <Box sx={cssColumn}>
-                    <Typography variant="subtitle1" gutterBottom>CAPTURADOS</Typography>
-                </Box>
-                <Box sx={cssColumn}>
-                    <Typography variant="subtitle1" gutterBottom>ESCAPARAM</Typography>
-                </Box>
-                <Box sx={cssColumn}>
-                    <Typography variant="subtitle1" gutterBottom>EM OUTRAS MÃOS</Typography>
-                </Box>
-            </Box>
-        </>
-    );
-}
-
-export default Pokanban; */
