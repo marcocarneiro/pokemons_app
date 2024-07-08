@@ -68,6 +68,10 @@ const Header: React.FC = () => {
                             color="inherit"
                             edge="start"
                             onClick={handleMenuToggle}
+                            sx={{'&:focus': {
+                                outline: 'none',
+                                boxShadow: 'none',
+                            },}}
                         >
                             <MenuIcon />
                         </IconButton>
