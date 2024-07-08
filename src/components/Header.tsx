@@ -19,6 +19,9 @@ const Header: React.FC = () => {
             <Button color="inherit" component={Link} to="/" sx={{ '&:hover': { color: '#900' }, margin: '0 20px' }} >
                 Pokemons
             </Button>
+            <Button color="inherit" component={Link} to="/pokanban" sx={{ '&:hover': { color: '#900' }, margin: '0 20px' }} >
+                Pokanban
+            </Button>
             <Button color="inherit" component={Link} to="/quiz" sx={{ '&:hover': { color: '#900' } }} >
                 Quiz
             </Button>

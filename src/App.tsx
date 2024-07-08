@@ -4,6 +4,7 @@ import { SearchProvider } from './contexts/SearchContext';
 import Home from './routes/PokemonGrid';
 import Quiz from './routes/Quiz';
 import PokemonData from './routes/PokemonData';
+import Pokanban from './routes/Pokanban';
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/pokemon/:name" element={<PokemonData />} />
+          <Route path="/pokanban" element={<Pokanban />} />
         </Routes>
       </Router>
     </SearchProvider>
