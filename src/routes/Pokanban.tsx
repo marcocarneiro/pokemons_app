@@ -3,6 +3,16 @@ import Grid from '../components/Grid';
 import Header from '../components/Header';
 import { Box } from '@mui/material';
 
+/*
+1 - Inserir botão para escolher Pokemons
+2 - Salvar no localstorage os dados da imagem, do nome e do status (1) do Pokemon
+3 - Tentar modificar o taskStore para que os dados exibdos sejam do LocalStorage
+4 - Se item 3 funcionar, instruir para que a AI modifique o status para 2 quando arrastados
+para a segunda coluna - e salvar no localStorage
+5 - Testar o carregamento das Grids baseado no localStorage
+*/
+
+
 const url = 'https://js.devexpress.com/Demos/Mvc/api/DnDBetweenGrids';
 
 const tasksStore = AspNetData.createStore({
