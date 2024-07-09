@@ -1,35 +1,37 @@
 import { useCallback, useState } from 'react';
 import DataGrid, {
-  Column, RowDragging, Scrolling, Lookup,
+  Column, RowDragging, Scrolling,
 } from 'devextreme-react/data-grid';
 
-const priorities = [{
-  id: 1, text: 'Low',
-}, {
-  id: 2, text: 'Normal',
-}, {
-  id: 3, text: 'High',
-}, {
-  id: 4, text: 'Urgent',
-}];
+// Definindo as props do componente Grid
+interface GridProps {
+  tasksStore: any;
+  status: string | number;
+  subjectTitle: string;
+}
 
-const Grid = ({ tasksStore, status }) => {
+const Grid: React.FC<GridProps> = ({ tasksStore, status, subjectTitle }) => {
   const [filterExpr] = useState(['Status', '=', status]);
   const [dataSource] = useState({
     store: tasksStore,
     reshapeOnPush: true,
   });
 
-  const onAdd = useCallback((e) => {
-    const key = e.itemData.ID;
-    const values = { Status: e.toData };
+  const onAdd = useCallback(
+    (e: any) => {
+      const key = e.itemData.ID;
+      const values = { Status: e.toData };
 
-    tasksStore.update(key, values).then(() => {
-      tasksStore.push([{
-        type: 'update', key, data: values,
-      }]);
-    });
-  }, [tasksStore]);
+      tasksStore.update(key, values).then(() => {
+        tasksStore.push([{
+          type: 'update',
+          key,
+          data: values,
+        }]);
+      });
+    },
+    [tasksStore]
+  );
 
   return (
     <DataGrid
@@ -47,18 +49,8 @@ const Grid = ({ tasksStore, status }) => {
       <Column
         dataField="Subject"
         dataType="string"
+        caption={subjectTitle}
       />
-      <Column
-        dataField="Priority"
-        dataType="number"
-        width={80}
-      >
-        <Lookup
-          dataSource={priorities}
-          valueExpr="id"
-          displayExpr="text"
-        />
-      </Column>
       <Column
         dataField="Status"
         dataType="number"

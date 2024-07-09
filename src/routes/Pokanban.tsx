@@ -18,8 +18,8 @@ const Pokanban = () => (
     <>
         <Header />
         <Box sx={{ display: 'flex', gap: 2, padding: '20px'}}>
-            <Grid tasksStore={tasksStore} status={1} />
-            <Grid tasksStore={tasksStore} status={2} />            
+            <Grid tasksStore={tasksStore} status={1} subjectTitle="Interesse" />
+            <Grid tasksStore={tasksStore} status={2} subjectTitle="Capturados" />            
         </Box>
     </>
 );
