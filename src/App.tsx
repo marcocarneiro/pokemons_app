@@ -5,6 +5,7 @@ import Home from './routes/PokemonGrid';
 import Quiz from './routes/Quiz';
 import PokemonData from './routes/PokemonData';
 import Pokanban from './routes/Pokanban';
+import 'devextreme/dist/css/dx.light.css';
 
 const App: React.FC = () => {
   return (

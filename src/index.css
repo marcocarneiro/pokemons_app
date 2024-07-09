@@ -68,3 +68,7 @@ button:focus-visible {
 body, html, #root{
   width: 100%;
 }
+
+.dx-theme-generic-typography a {
+  color: inherit;
+}

@@ -16,7 +16,7 @@ const Header: React.FC = () => {
 
     const navigationButtons = (
         <>
-            <Button color="inherit" component={Link} to="/" sx={{ '&:hover': { color: '#900' }, margin: '0 20px' }} >
+            <Button color="inherit" component={Link} to="/" sx={{ color: '#fff', '&:hover': { color: '#900' }, margin: '0 20px' }} >
                 Pokemons
             </Button>
             <Button color="inherit" component={Link} to="/pokanban" sx={{ '&:hover': { color: '#900' }, margin: '0 20px' }} >
