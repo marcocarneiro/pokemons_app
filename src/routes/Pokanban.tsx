@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '../components/Grid';
 import Header from '../components/Header';
 import { Box, Fab, Modal, TextField, Autocomplete } from '@mui/material';
@@ -7,13 +7,24 @@ import AddIcon from '@mui/icons-material/Add';
 const fetchPokemonList = async () => {
     const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=500');
     const data = await response.json();
-    return data.results.map((pokemon: any) => pokemon.name);
+    return data.results.map((pokemon: any) => pokemon);
+};
+
+const getSelectedPokemons = () => {
+    const savedPokemons = localStorage.getItem('selectedPokemons');
+    return savedPokemons ? JSON.parse(savedPokemons) : [];
+};
+
+const savePokemonToLocalStorage = (pokemon: any) => {
+    const savedPokemons = getSelectedPokemons();
+    const updatedPokemons = [...savedPokemons, pokemon];
+    localStorage.setItem('selectedPokemons', JSON.stringify(updatedPokemons));
 };
 
 const Pokanban = () => {
     const [open, setOpen] = useState(false);
-    const [pokemonList, setPokemonList] = useState<string[]>([]);
-    const [selectedPokemon, setSelectedPokemon] = useState<string | null>(null);
+    const [pokemonList, setPokemonList] = useState<any[]>([]);
+    const [autocompleteList, setAutocompleteList] = useState<string[]>([]);
 
     useEffect(() => {
         const loadPokemonList = async () => {
@@ -23,8 +34,32 @@ const Pokanban = () => {
         loadPokemonList();
     }, []);
 
+    useEffect(() => {
+        const selectedPokemons = getSelectedPokemons();
+        const selectedPokemonNames = selectedPokemons.map((p: any) => p.name);
+        const availablePokemons = pokemonList.filter((pokemon: any) => !selectedPokemonNames.includes(pokemon.name));
+        setAutocompleteList(availablePokemons.map((pokemon: any) => pokemon.name));
+    }, [pokemonList]);
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleSelect = (event: any, newValue: string | null) => {
+        if (newValue) {
+            const pokemon = pokemonList.find((p: any) => p.name === newValue);
+            if (pokemon) {
+                const pokemonData = {
+                    name: pokemon.name,
+                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.url.split('/')[6]}.png`,
+                    status: 1,
+                };
+                savePokemonToLocalStorage(pokemonData);
+                setAutocompleteList((prev) => prev.filter((name) => name !== newValue));
+                handleClose();
+                console.log(localStorage.getItem('selectedPokemons'));
+            }
+        }
+    };
 
     return (
         <>
@@ -69,10 +104,8 @@ const Pokanban = () => {
                 >
                     <Autocomplete
                         id="pokemon-autocomplete"
-                        options={pokemonList}
-                        onChange={(event, newValue) => {
-                            setSelectedPokemon(newValue);
-                        }}
+                        options={autocompleteList}
+                        onChange={handleSelect}
                         renderInput={(params) => <TextField {...params} label="Choose a Pokémon" />}
                     />
                 </Box>
@@ -82,33 +115,3 @@ const Pokanban = () => {
 };
 
 export default Pokanban;
-
-
-
-/* import * as AspNetData from 'devextreme-aspnet-data-nojquery';
-import Grid from '../components/Grid';
-import Header from '../components/Header';
-import { Box } from '@mui/material';
-
-const url = 'https://js.devexpress.com/Demos/Mvc/api/DnDBetweenGrids';
-
-const tasksStore = AspNetData.createStore({
-  key: 'ID',
-  loadUrl: `${url}/Tasks`,
-  updateUrl: `${url}/UpdateTask`,
-  onBeforeSend(method, ajaxOptions) {
-    ajaxOptions.xhrFields = { withCredentials: true };
-  },
-});
-
-const Pokanban = () => (
-    <>
-        <Header />
-        <Box sx={{ display: 'flex', gap: 2, padding: '20px'}}>
-            <Grid tasksStore={tasksStore} status={1} subjectTitle="Interesse" />
-            <Grid tasksStore={tasksStore} status={2} subjectTitle="Capturados" />            
-        </Box>
-    </>
-);
-
-export default Pokanban; */
