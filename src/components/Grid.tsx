@@ -5,8 +5,8 @@ import DataGrid, {
 
 // Definindo as props do componente Grid
 interface GridProps {
-  tasksStore: any;
-  status: string | number;
+  tasksStore?: any;
+  status?: string | number;
   subjectTitle: string;
 }
 
