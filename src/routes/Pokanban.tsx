@@ -1,108 +1,121 @@
 import React, { useState, useEffect } from 'react';
-import Grid from '../components/Grid';
-import Header from '../components/Header';
-import { Box, Fab, Modal, TextField, Autocomplete } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Column, DataGrid } from 'devextreme-react/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import LocalStore from 'devextreme/data/local_store';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
-const fetchPokemonList = async () => {
-    const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=500');
-    const data = await response.json();
-    return data.results.map((pokemon: any) => pokemon);
+interface Pokemon {
+  id: number;
+  nome: string;
+  imagem: string;
+  status: number;
+}
+
+const initialData: Pokemon[] = [
+  { id: 1, nome: 'Pikachu', imagem: 'teste.jpg', status: 1 },
+  { id: 2, nome: 'Avatar', imagem: 'teste2.jpg', status: 1 },
+];
+
+const store = new LocalStore({
+  key: 'id',
+  data: initialData,
+  name: 'myLocalData',
+});
+
+const dataSource = new DataSource({
+  store: store,
+});
+
+const MyDataGridComponent: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const [newPokemon, setNewPokemon] = useState({ id: 0, nome: '', imagem: '', status: 1 });
+
+  useEffect(() => {
+    // Load data from localStorage when component mounts
+    const localData = localStorage.getItem('myLocalData');
+    if (localData) {
+      const parsedData = JSON.parse(localData);
+      store.clear();
+      parsedData.forEach((item: Pokemon) => store.insert(item));
+      dataSource.reload();
+    }
+  }, []);
+
+  const handleAddClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setNewPokemon({ id: 0, nome: '', imagem: '', status: 1 });
+  };
+
+  const handleSave = async () => {
+    const currentData = (await store.load()) as Pokemon[];
+    const newId = currentData.length > 0 ? Math.max(...currentData.map(d => d.id)) + 1 : 1;
+    const newData = { ...newPokemon, id: newId };
+
+    await store.insert(newData);
+    const updatedData = (await store.load()) as Pokemon[];
+    localStorage.setItem('myLocalData', JSON.stringify(updatedData));
+    dataSource.reload();
+
+    handleClose();
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewPokemon(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div>
+      <DataGrid dataSource={dataSource} showBorders={true} keyExpr="id">
+        <Column dataField="id" caption="ID" width={50} />
+        <Column dataField="nome" caption="Nome" />
+        <Column dataField="imagem" caption="Imagem" />
+        <Column dataField="status" caption="Status" width={70} />
+      </DataGrid>
+      <Button variant="contained" color="primary" onClick={handleAddClick} style={{ marginTop: '16px' }}>
+        Adicionar Pokémon
+      </Button>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Adicionar Novo Pokémon</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Nome"
+            name="nome"
+            value={newPokemon.nome}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Imagem"
+            name="imagem"
+            value={newPokemon.imagem}
+            onChange={handleChange}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 };
 
-const Pokanban = () => {
-    const [open, setOpen] = useState(false);
-    const [pokemonList, setPokemonList] = useState<any[]>([]);
-    const [autocompleteList, setAutocompleteList] = useState<string[]>([]);
-    const [selectedPokemons, setSelectedPokemons] = useState<any[]>([]);
+export default MyDataGridComponent;
 
-    useEffect(() => {
-        const loadPokemonList = async () => {
-            const list = await fetchPokemonList();
-            setPokemonList(list);
-        };
-        loadPokemonList();
-    }, []);
 
-    useEffect(() => {
-        const selectedPokemonNames = selectedPokemons.map((p: any) => p.name);
-        const availablePokemons = pokemonList.filter((pokemon: any) => !selectedPokemonNames.includes(pokemon.name));
-        setAutocompleteList(availablePokemons.map((pokemon: any) => pokemon.name));
-    }, [pokemonList, selectedPokemons]);
-
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    const handleSelect = (event: any, newValue: string | null) => {
-        if (newValue) {
-            const pokemon = pokemonList.find((p: any) => p.name === newValue);
-            if (pokemon) {
-                const pokemonData = {
-                    name: pokemon.name,
-                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.url.split('/')[6]}.png`,
-                    status: 1,
-                };
-                setSelectedPokemons((prev) => [...prev, pokemonData]);
-                setAutocompleteList((prev) => prev.filter((name) => name !== newValue));
-                handleClose();
-            }
-        }
-    };
-
-    return (
-        <>
-            <Header />
-            <Box sx={{ display: 'flex', gap: 2, padding: '20px' }}>
-                <Grid subjectTitle="Interesse" tasksStore={selectedPokemons.filter(p => p.status === 1)} />
-                <Grid subjectTitle="Capturados" />
-            </Box>
-            <Fab
-                color="primary"
-                aria-label="add"
-                onClick={handleOpen}
-                sx={{
-                    position: 'fixed',
-                    bottom: 16,
-                    right: 16,
-                    '&:focus': {
-                        outline: 'none',
-                    },
-                }}
-            >
-                <AddIcon />
-            </Fab>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-title"
-                aria-describedby="modal-description"
-            >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 400,
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
-                    }}
-                >
-                    <Autocomplete
-                        id="pokemon-autocomplete"
-                        options={autocompleteList}
-                        onChange={handleSelect}
-                        renderInput={(params) => <TextField {...params} label="Choose a Pokémon" />}
-                    />
-                </Box>
-            </Modal>
-        </>
-    );
-};
-
-export default Pokanban;
 
 
 
@@ -110,119 +123,119 @@ export default Pokanban;
 
 
 /* import React, { useState, useEffect } from 'react';
-import Grid from '../components/Grid';
-import Header from '../components/Header';
-import { Box, Fab, Modal, TextField, Autocomplete } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Column, DataGrid } from 'devextreme-react/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import LocalStore from 'devextreme/data/local_store';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
-const fetchPokemonList = async () => {
-    const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=500');
-    const data = await response.json();
-    return data.results.map((pokemon: any) => pokemon);
+interface Pokemon {
+  id: number;
+  nome: string;
+  imagem: string;
+  status: number;
+}
+
+const initialData: Pokemon[] = [
+  { id: 1, nome: 'Pikachu', imagem: 'teste.jpg', status: 1 },
+  { id: 2, nome: 'Avatar', imagem: 'teste2.jpg', status: 1 },
+];
+
+const dataSource = new DataSource({
+  store: new LocalStore({
+    key: 'id',
+    data: initialData,
+    name: 'myLocalData',
+  }),
+});
+
+const MyDataGridComponent: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const [newPokemon, setNewPokemon] = useState({ id: 0, nome: '', imagem: '', status: 1 });
+
+  useEffect(() => {
+    // Load data from localStorage when component mounts
+    const store = dataSource.store() as LocalStore;
+    const localData = localStorage.getItem('myLocalData');
+    if (localData) {
+      const parsedData = JSON.parse(localData);
+      store.clear();
+      parsedData.forEach((item: Pokemon) => store.insert(item));
+      dataSource.reload();
+    }
+  }, []);
+
+  const handleAddClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setNewPokemon({ id: 0, nome: '', imagem: '', status: 1 });
+  };
+
+  const handleSave = async () => {
+    const store = dataSource.store() as LocalStore;
+    const data = await store.load() as Pokemon[];
+    const newId = data.length > 0 ? Math.max(...data.map(d => d.id)) + 1 : 1;
+    const newData = { ...newPokemon, id: newId };
+
+    await store.insert(newData);
+    const updatedData = await store.load();
+    dataSource.reload();
+    localStorage.setItem('myLocalData', JSON.stringify(updatedData));
+
+    handleClose();
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewPokemon(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div>
+      <DataGrid dataSource={dataSource} showBorders={true} keyExpr="id">
+        <Column dataField="id" caption="ID" width={50} />
+        <Column dataField="nome" caption="Nome" />
+        <Column dataField="imagem" caption="Imagem" />
+        <Column dataField="status" caption="Status" width={70} />
+      </DataGrid>
+      <Button variant="contained" color="primary" onClick={handleAddClick} style={{ marginTop: '16px' }}>
+        Adicionar Pokémon
+      </Button>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Adicionar Novo Pokémon</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Nome"
+            name="nome"
+            value={newPokemon.nome}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="Imagem"
+            name="imagem"
+            value={newPokemon.imagem}
+            onChange={handleChange}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 };
 
-const getSelectedPokemons = () => {
-    const savedPokemons = localStorage.getItem('selectedPokemons');
-    return savedPokemons ? JSON.parse(savedPokemons) : [];
-};
-
-const savePokemonToLocalStorage = (pokemon: any) => {
-    const savedPokemons = getSelectedPokemons();
-    const updatedPokemons = [...savedPokemons, pokemon];
-    localStorage.setItem('selectedPokemons', JSON.stringify(updatedPokemons));
-};
-
-const Pokanban = () => {
-    const [open, setOpen] = useState(false);
-    const [pokemonList, setPokemonList] = useState<any[]>([]);
-    const [autocompleteList, setAutocompleteList] = useState<string[]>([]);
-
-    useEffect(() => {
-        const loadPokemonList = async () => {
-            const list = await fetchPokemonList();
-            setPokemonList(list);
-        };
-        loadPokemonList();
-    }, []);
-
-    useEffect(() => {
-        const selectedPokemons = getSelectedPokemons();
-        const selectedPokemonNames = selectedPokemons.map((p: any) => p.name);
-        const availablePokemons = pokemonList.filter((pokemon: any) => !selectedPokemonNames.includes(pokemon.name));
-        setAutocompleteList(availablePokemons.map((pokemon: any) => pokemon.name));
-    }, [pokemonList]);
-
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    const handleSelect = (event: any, newValue: string | null) => {
-        if (newValue) {
-            const pokemon = pokemonList.find((p: any) => p.name === newValue);
-            if (pokemon) {
-                const pokemonData = {
-                    name: pokemon.name,
-                    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.url.split('/')[6]}.png`,
-                    status: 1,
-                };
-                savePokemonToLocalStorage(pokemonData);
-                setAutocompleteList((prev) => prev.filter((name) => name !== newValue));
-                handleClose();
-                console.log(localStorage.getItem('selectedPokemons'));
-            }
-        }
-    };
-
-    return (
-        <>
-            <Header />
-            <Box sx={{ display: 'flex', gap: 2, padding: '20px' }}>
-                <Grid subjectTitle="Interesse" />
-                <Grid subjectTitle="Capturados" />
-            </Box>
-            <Fab
-                color="primary"
-                aria-label="add"
-                onClick={handleOpen}
-                sx={{
-                    position: 'fixed',
-                    bottom: 16,
-                    right: 16,
-                    '&:focus': {
-                        outline: 'none',
-                    },
-                }}
-            >
-                <AddIcon />
-            </Fab>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-title"
-                aria-describedby="modal-description"
-            >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 400,
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
-                    }}
-                >
-                    <Autocomplete
-                        id="pokemon-autocomplete"
-                        options={autocompleteList}
-                        onChange={handleSelect}
-                        renderInput={(params) => <TextField {...params} label="Choose a Pokémon" />}
-                    />
-                </Box>
-            </Modal>
-        </>
-    );
-};
-
-export default Pokanban; */
+export default MyDataGridComponent;
+ */
